@@ -166,12 +166,13 @@ bool save_board(const char* filename, char board[9][9])
 }
 
 /*Question 4 function*/
+//fidelis: go iterative then recursive.
 
 bool solve_board(char board[9][9])
 {
   while(!is_complete(board))
   {
-    for (int column = 0; column < 1; column++)
+    for (int column = 0; column < 9; column++)
     {
       for (int row = 0; row < 9; row++)
       {
@@ -187,18 +188,18 @@ bool solve_board(char board[9][9])
                 if (make_move1(currentPosition, static_cast<char>(guess+48),board)==true)
                 {
                   board[column][row] = static_cast<char>(guess+48);
+                  //test iteratively and validate line by line. recursive solution is not v far.
                   return solve_board(board);
                 }
-                if (guess==10)
+                if (guess==10 && column==0 && row ==0)
                 {
+
                   return false;
                 }
               }
            }
         }
       }
-      //dummy function
-      return true;
     }
   return true;
 }
@@ -252,4 +253,38 @@ bool make_move1(const char position[], const char digit,const char board[9][9])
   return true;
 }
 
-//THEN see which ones are possible/impossible to solve. Show the limits of your knowledge as well imo.
+/* solve board problem
+bool solve_board(char board[9][9])
+{
+  while(!is_complete(board))
+  {
+    for (int column = 0; column < 9; column++)
+    {
+      for (int row = 0; row < 9; row++)
+      {
+        int unCompletedBlank = static_cast<int>(board[column][row]);
+        if (unCompletedBlank < 48)
+        {
+              char currentPosition[3];
+              currentPosition[0] = static_cast<char>(column+65);
+              currentPosition[1] = static_cast<char>(row+49);
+              currentPosition[2] = '\0';
+              for (int guess = 1; guess <= 10; guess++)
+              {
+                if (make_move1(currentPosition, static_cast<char>(guess+48),board)==true)
+                {
+                  board[column][row] = static_cast<char>(guess+48);
+                  return solve_board(board);
+                }
+                if (guess==10)
+                {
+                  return false;
+                }
+              }
+           }
+        }
+      }
+    }
+  return true;
+}
+*/
