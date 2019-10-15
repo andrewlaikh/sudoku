@@ -189,12 +189,15 @@ bool solve_board(char board[9][9])
                 {
                   board[column][row] = static_cast<char>(guess+48);
                   //test iteratively and validate line by line. recursive solution is not v far.
-                  return solve_board(board);
+                  continue;
                 }
                 if (guess==10 && column==0 && row ==0)
                 {
-
                   return false;
+                }
+                else if (guess == 10)
+                {
+
                 }
               }
            }
