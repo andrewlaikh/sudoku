@@ -90,12 +90,50 @@ bool make_move(const char position[], const char digit, const char board[9][9])
 {
   int columnPosition = (static_cast<int>((position[0]))-65);
   int rowPosition = (static_cast<int>(position[1])-49);
-  if ((rowPosition < 0 || rowPosition > 8) || (columnPosition < 0 ||   columnPosition > 8))
+
+  if (outOfRange(columnPosition, rowPosition) == true)
   {
     return false;
   }
+
   int entry = (static_cast<int>(digit)-48);
   //checks column to see if there is a repeat number
+  if (columnOverlap(entry, columnPosition, rowPosition, board)==true)
+  {
+    return false;
+  }
+
+  //checks row to see if there is a repeat number
+  if (rowOverlap(entry, columnPosition, rowPosition, board)==true)
+  {
+    return false;
+  }
+
+  //check square for overlap
+  if (squareOverlap(entry, columnPosition, rowPosition, board)==true)
+  {
+     return false;
+  }
+
+
+  return true;
+}
+
+
+bool outOfRange(int columnPosition, int rowPosition)
+{
+  if ((rowPosition < 0 || rowPosition > 8) || (columnPosition < 0 ||   columnPosition > 8))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+bool columnOverlap(int entry, int columnPosition, int rowPosition, const char board[9][9])
+{
   for (int columnCheck = 0; columnCheck < 9; columnCheck++)
   {
       if (columnCheck == columnPosition)
@@ -104,25 +142,39 @@ bool make_move(const char position[], const char digit, const char board[9][9])
       }
       if ((static_cast<int>(board[columnCheck][rowPosition])-48)==entry)
       {
-        return false;
+        return true;
       }
   }
-  //checks row to see if there is a repeat number
-  for (int rowCheck = 0; rowCheck < 9 && (rowCheck !=rowPosition); rowCheck++)
+  return false;
+}
+
+bool rowOverlap(int entry, int columnPosition, int rowPosition, const char board[9][9])
+{
+  for (int rowCheck = 0; rowCheck < 9; rowCheck++)
   {
-      if (rowCheck == columnPosition)
+      if (rowCheck == rowPosition)
       {
         continue;
       }
       if ((static_cast<int>(board[columnPosition][rowCheck])-48)==entry)
       {
-        return false;
+        return true;
       }
   }
-  //check square for overlap
-  for (int cBorderMin = ((columnPosition/3)*3); cBorderMin < (cBorderMin +2); cBorderMin++)
+  return false;
+}
+
+
+//review the last program, there's a problem with it working.
+//line 78 main has a problem. SQUARE DOESN'T FIT IN.
+//somehow rBorderMin keeps on skipping THROUGH? s
+bool squareOverlap(int entry, int columnPosition, int rowPosition, const char board[9][9])
+{
+  int cBorderMinStop = (((columnPosition/3)*3)+2)+1;
+  int rBorderMinStop = (((rowPosition/3)*3)+2)+1;
+  for (int cBorderMin = (columnPosition/3)*3;cBorderMin<cBorderMinStop; cBorderMin++)
   {
-    for (int rBorderMin = ((rowPosition/3)*3); rBorderMin < (rBorderMin +2); rBorderMin++)
+    for (int rBorderMin = (rowPosition/3)*3;rBorderMin<rBorderMinStop; rBorderMin++)
     {
       if ((rBorderMin == rowPosition) && (cBorderMin==columnPosition))
       {
@@ -130,16 +182,19 @@ bool make_move(const char position[], const char digit, const char board[9][9])
       }
       if (entry == board[cBorderMin][rBorderMin])
       {
-        return false;
+        return true;
+      }
+      if (rBorderMin==rBorderMinStop)
+      {
+        break;
       }
     }
   }
-
-  return true;
+  return false;
 }
 
 /*Question 3 function*/
-
+/*
 //http://www.cplusplus.com/doc/tutorial/files/ crediting source for writing output
 
 bool save_board(const char* filename, char board[9][9])
@@ -164,10 +219,12 @@ bool save_board(const char* filename, char board[9][9])
   }
   return true;
 }
+*/
+
 
 /*Question 4 function*/
-//fidelis: go iterative then recursive.
-
+//define helper function as is true, (char table, previous value column, previous value row, previous value)
+/*
 bool solve_board(char board[9][9])
 {
   while(!is_complete(board))
@@ -185,11 +242,10 @@ bool solve_board(char board[9][9])
               currentPosition[2] = '\0';
               for (int guess = 1; guess <= 10; guess++)
               {
-                if (make_move1(currentPosition, static_cast<char>(guess+48),board)==true)
+                if (make_move1(board, currentPosition, static_cast<char>(guess+48))==true)
                 {
                   board[column][row] = static_cast<char>(guess+48);
-                  //test iteratively and validate line by line. recursive solution is not v far.
-                  continue;
+                  return ;
                 }
                 if (guess==10 && column==0 && row ==0)
                 {
@@ -208,7 +264,7 @@ bool solve_board(char board[9][9])
 }
 
 
-bool make_move1(const char position[], const char digit,const char board[9][9])
+bool make_move1(const char board[9][9], const char position[], const char digit, const int previousValue, const int previousValueColumn, const int previousValueRow)
 {
   int columnPosition = (static_cast<int>((position[0]))-65);
   int rowPosition = (static_cast<int>(position[1])-49);
@@ -255,6 +311,8 @@ bool make_move1(const char position[], const char digit,const char board[9][9])
 
   return true;
 }
+
+*/
 
 /* solve board problem
 bool solve_board(char board[9][9])
