@@ -1,1 +1,1 @@
-# sudoku solver for Imperial MSc Computing Science coursework 
+# Sudoku solver for Imperial MSc Computing Science coursework 
