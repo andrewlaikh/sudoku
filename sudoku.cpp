@@ -197,7 +197,7 @@ bool squareOverlap(int entry, int columnPosition, int rowPosition, const char bo
 }
 
 /*Question 3 function*/
-/*
+
 //http://www.cplusplus.com/doc/tutorial/files/ crediting source for writing output
 
 bool save_board(const char* filename, char board[9][9])
@@ -222,100 +222,147 @@ bool save_board(const char* filename, char board[9][9])
   }
   return true;
 }
-*/
 
 
 /*Question 4 function*/
 //define helper function as is true, (char table, previous value column, previous value row, previous value)
-/*
+
 bool solve_board(char board[9][9])
+{
+  int previousValueColumn(0), previousValueRow(0),  previousValue(0), flag(0);
+  while(!is_complete(board))
+  {
+    for (int column = 0; column < 9; column++)
+    {
+      for (int row = 0; row < 1; row++)
+      {
+        char currentSquare = board[column][row];
+        if (isEmpty(currentSquare) == false)
+        {
+          continue;
+        }
+        else
+        {
+          char currentPosition[3];
+          currentPosition[0] = static_cast<char>(column+65);
+          currentPosition[1] = static_cast<char>(row+49);
+          currentPosition[2] = '\0';
+          for (int guess = 1; guess <= 10; guess++)
+          {
+            if (make_move(currentPosition, static_cast<char>(guess+48), board)==true)
+            {
+              board[column][row] = static_cast<char>(guess+48);
+              display_board(board);
+              previousValueColumn = column;
+              previousValueRow = row;
+              previousValue = guess;
+              return solve_board1(board, previousValueRow, previousValueRow, previousValue, flag);
+            }
+            if (guess==10 && column==0 && row ==0)
+            {
+              return false;
+            }
+            if (guess == 10)
+            {
+              board[previousValueColumn][previousValueRow] = ',';
+              return solve_board1(board, previousValueColumn, previousValueRow, previousValue, flag);
+            }
+          }
+        }
+
+      }
+    }
+  }
+  return true;
+}
+
+
+bool solve_board1(char board[9][9], int previousValueColumn, int previousValueRow, int previousValue, int flag)
 {
   while(!is_complete(board))
   {
     for (int column = 0; column < 9; column++)
     {
-      for (int row = 0; row < 9; row++)
+      for (int row = 0; row < 3; row++)
       {
-        int unCompletedBlank = static_cast<int>(board[column][row]);
-        if (unCompletedBlank < 48)
+        char currentSquare = board[column][row];
+        if (isEmpty(currentSquare) == false)
         {
-              char currentPosition[3];
-              currentPosition[0] = static_cast<char>(column+65);
-              currentPosition[1] = static_cast<char>(row+49);
-              currentPosition[2] = '\0';
-              for (int guess = 1; guess <= 10; guess++)
+          continue;
+        }
+        else
+        {
+          char currentPosition[3];
+          currentPosition[0] = static_cast<char>(column+65);
+          currentPosition[1] = static_cast<char>(row+49);
+          currentPosition[2] = '\0';
+          if (flag == 1)
+          {
+            for (int guess = (previousValue+1); guess <= 10; guess++)
+            {
+              if (make_move(currentPosition, static_cast<char>(guess+48), board)==true)
               {
-                if (make_move1(board, currentPosition, static_cast<char>(guess+48))==true)
-                {
-                  board[column][row] = static_cast<char>(guess+48);
-                  return ;
-                }
-                if (guess==10 && column==0 && row ==0)
-                {
-                  return false;
-                }
-                else if (guess == 10)
-                {
-
-                }
+                flag = 0;
+                board[column][row] = static_cast<char>(guess+48);
+                display_board(board);
+                previousValueColumn = column;
+                previousValueRow = row;
+                previousValue = guess;
+                return solve_board1(board, previousValueRow, previousValueRow, previousValue, flag);
               }
-           }
+              if (guess==10 && column==0 && row ==0)
+              {
+                return false;
+              }
+              else if (guess == 10)
+              {
+                board[previousValueColumn][previousValueRow] = ',';
+                flag = 1;
+                return solve_board1(board, previousValueColumn, previousValueRow, previousValue, flag);
+              }
+            }
+          }
+          if (flag == 0)
+          {
+            for (int guess = 0; guess <= 10; guess++)
+            {
+              if (make_move(currentPosition, static_cast<char>(guess+48), board)==true)
+              {
+                board[column][row] = static_cast<char>(guess+48);
+                display_board(board);
+                previousValueColumn = column;
+                previousValueRow = row;
+                previousValue = guess;
+                return solve_board1(board, previousValueRow, previousValueRow, previousValue, flag);
+              }
+              if (guess==10 && column==0 && row ==0)
+              {
+                return false;
+              }
+              else if (guess == 10)
+              {
+                board[previousValueColumn][previousValueRow] = ',';
+                flag == 1;
+                return solve_board1(board, previousValueColumn, previousValueRow, previousValue, flag);
+              }
+            }
+          }
         }
       }
     }
-  return true;
+    return true;
+  }
 }
 
-
-bool make_move1(const char board[9][9], const char position[], const char digit, const int previousValue, const int previousValueColumn, const int previousValueRow)
+bool isEmpty(char entry)
 {
-  int columnPosition = (static_cast<int>((position[0]))-65);
-  int rowPosition = (static_cast<int>(position[1])-49);
-  int entry = (static_cast<int>(digit)-48);
-  //checks column to see if there is a repeat number
-  for (int columnCheck = 0; columnCheck < 9; columnCheck++)
+  int unCompletedBlank = static_cast<int>(entry);
+  if (unCompletedBlank < 48)
   {
-      if (columnCheck == columnPosition)
-      {
-        continue;
-      }
-      if ((static_cast<int>(board[columnCheck][rowPosition])-48)==entry)
-      {
-        return false;
-      }
+    return true;
   }
-  //checks row to see if there is a repeat number
-  for (int rowCheck = 0; rowCheck < 9; rowCheck++)
-  {
-      if (rowCheck == rowPosition)
-      {
-        continue;
-      }
-      if ((static_cast<int>(board[columnPosition][rowCheck])-48)==entry)
-      {
-        return false;
-      }
-  }
-  //check square to see for overlap
-  for (int cBorderMin = ((columnPosition/3)*3); cBorderMin < (cBorderMin +2); cBorderMin++)
-  {
-    for (int rBorderMin = ((rowPosition/3)*3); rBorderMin < (rBorderMin +2); rBorderMin++)
-    {
-      if ((rBorderMin == rowPosition) && (cBorderMin==columnPosition))
-      {
-        continue;
-      }
-      if (entry == board[cBorderMin][rBorderMin])
-      {
-        return false;
-      }
-    }
-  }
-
-  return true;
+  return false;
 }
-
-*/
 
 /* solve board problem
 bool solve_board(char board[9][9])
