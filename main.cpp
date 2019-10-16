@@ -74,8 +74,8 @@ int main() {
   cout << "a valid move. The board is:" << '\n';
   display_board(board);
 
-  cout << "Putting '4' into A1 is ";
-  if (!make_move("A1", '4', board))
+  cout << "Putting '5' into C4 is ";
+  if (!make_move("C4", '5', board))
     cout << "NOT ";
   cout << "a valid move. The board is:" << '\n';
   display_board(board);
