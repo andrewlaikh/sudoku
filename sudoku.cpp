@@ -229,129 +229,134 @@ bool save_board(const char* filename, char board[9][9])
 
 bool solve_board(char board[9][9])
 {
-  int previousValueColumn(0), previousValueRow(0),  previousValue(0), flag(0);
+  int previousValueColumn[100], previousValueRow[100], inputValue[100];
+  int trackerValue = 0;
+  determineEmptyColumnseEmptyRows(board, previousValueColumn, previousValueRow);
+  if (solve_board1(board, previousValueColumn, previousValueRow, trackerValue, inputValue, false)==true)
+  {
+    return true;
+  }
+  else
+    return false;
+}
+
+
+bool solve_board1(char board[9][9], int previousValueColumn[], int previousValueRow[], int trackerValue, int inputValue[], bool previousOverflow)
+{
   while(!is_complete(board))
   {
-    for (int column = 0; column < 9; column++)
+    if (previousOverflow == false)
     {
-      for (int row = 0; row < 1; row++)
+      for (int column = 0; column < 9; column++)
       {
-        char currentSquare = board[column][row];
-        if (isEmpty(currentSquare) == false)
+        for (int row = 0; row < 9; row++)
         {
-          continue;
-        }
-        else
-        {
-          char currentPosition[3];
-          currentPosition[0] = static_cast<char>(column+65);
-          currentPosition[1] = static_cast<char>(row+49);
-          currentPosition[2] = '\0';
-          for (int guess = 1; guess <= 10; guess++)
+          char currentSquare = board[column][row];
+          if (isEmpty(currentSquare) == false)
           {
-            if (make_move(currentPosition, static_cast<char>(guess+48), board)==true)
+            continue;
+          }
+          else
+          {
+            //CHECK THAT GUESS PLACEMENT IS RIGHT.
+            int guess(0);
+            char currentPosition[3];
+            currentPosition[0] = static_cast<char>(column+65);
+            currentPosition[1] = static_cast<char>(row+49);
+            currentPosition[2] = '\0';
+            if (previousOverflow == false)
             {
-              board[column][row] = static_cast<char>(guess+48);
-              display_board(board);
-              previousValueColumn = column;
-              previousValueRow = row;
-              previousValue = guess;
-              return solve_board1(board, previousValueRow, previousValueRow, previousValue, flag);
+              guess = 1;
             }
-            if (guess==10 && column==0 && row ==0)
+            for (; guess <= 10; guess++)
             {
-              return false;
-            }
-            if (guess == 10)
-            {
-              board[previousValueColumn][previousValueRow] = ',';
-              return solve_board1(board, previousValueColumn, previousValueRow, previousValue, flag);
+              if (make_move(currentPosition, static_cast<char>(guess+48), board)==true && guess < 10)
+              {
+                previousOverflow = false;
+                //update new value into tracker
+                inputValue[trackerValue] = guess;
+                //insert value into array
+                board[column][row] = static_cast<char>(guess+48);
+                //increment trackerValue
+                trackerValue = trackerValue+1;
+                display_board(board);
+                return solve_board1(board, previousValueColumn, previousValueRow, trackerValue, inputValue, previousOverflow);
+              }
+              if (guess==10 && column==0 && row ==0)
+              {
+                return false;
+              }
+              else if (guess == 10)
+              {
+                //change to empty value
+                board[column][row] = ',';
+                //go back to previous value and count again
+                previousOverflow = true;
+                //go back by one value in tracker
+                trackerValue = trackerValue - 1;
+                return solve_board1(board, previousValueColumn, previousValueRow, trackerValue, inputValue, previousOverflow);
+              }
             }
           }
         }
-
       }
+    }
+    if (previousOverflow == true)
+    {
+      int guess = inputValue[trackerValue] + 1;
+      int column = previousValueColumn[trackerValue];
+      int row = previousValueRow[trackerValue];
+      if (guess==10 && column==0 && row ==0)
+      {
+        return false;
+      }
+      //CHECK IF REUNDANCIES BELOW NEED TO BE CHANGED.
+      else if (guess == 10)
+      {
+        //change to empty value
+        board[column][row] = ',';
+        //go back to previous value and count again
+        previousOverflow = true;
+        //go back by one value in tracker
+        trackerValue = trackerValue - 1;
+        return solve_board1(board, previousValueColumn, previousValueRow, trackerValue, inputValue, previousOverflow);
+      }
+      for (; guess <= 10; guess++)
+      {
+        char currentPosition[3];
+        currentPosition[0] = static_cast<char>(column+65);
+        currentPosition[1] = static_cast<char>(row+49);
+        currentPosition[2] = '\0';
+        if (make_move(currentPosition, static_cast<char>(guess+48), board)==true && guess < 10)
+        {
+          previousOverflow = false;
+          //update new value into tracker
+          inputValue[trackerValue] = guess;
+          //insert value into array
+          board[column][row] = static_cast<char>(guess+48);
+          //increment trackerValue
+          trackerValue = trackerValue+1;
+          display_board(board);
+          return solve_board1(board, previousValueColumn, previousValueRow, trackerValue, inputValue, previousOverflow);
+        }
+        if (guess==10 && column==0 && row ==0)
+        {
+          return false;
+        }
+        else if (guess == 10)
+        {
+          //change to empty value
+          board[column][row] = ',';
+          //go back to previous value and count again
+          previousOverflow = true;
+          //go back by one value in tracker
+          trackerValue = trackerValue - 1;
+          return solve_board1(board, previousValueColumn, previousValueRow, trackerValue, inputValue, previousOverflow);
+        }
     }
   }
   return true;
 }
-
-
-bool solve_board1(char board[9][9], int previousValueColumn, int previousValueRow, int previousValue, int flag)
-{
-  while(!is_complete(board))
-  {
-    for (int column = 0; column < 9; column++)
-    {
-      for (int row = 0; row < 3; row++)
-      {
-        char currentSquare = board[column][row];
-        if (isEmpty(currentSquare) == false)
-        {
-          continue;
-        }
-        else
-        {
-          char currentPosition[3];
-          currentPosition[0] = static_cast<char>(column+65);
-          currentPosition[1] = static_cast<char>(row+49);
-          currentPosition[2] = '\0';
-          if (flag == 1)
-          {
-            for (int guess = (previousValue+1); guess <= 10; guess++)
-            {
-              if (make_move(currentPosition, static_cast<char>(guess+48), board)==true)
-              {
-                flag = 0;
-                board[column][row] = static_cast<char>(guess+48);
-                display_board(board);
-                previousValueColumn = column;
-                previousValueRow = row;
-                previousValue = guess;
-                return solve_board1(board, previousValueRow, previousValueRow, previousValue, flag);
-              }
-              if (guess==10 && column==0 && row ==0)
-              {
-                return false;
-              }
-              else if (guess == 10)
-              {
-                board[previousValueColumn][previousValueRow] = ',';
-                flag = 1;
-                return solve_board1(board, previousValueColumn, previousValueRow, previousValue, flag);
-              }
-            }
-          }
-          if (flag == 0)
-          {
-            for (int guess = 0; guess <= 10; guess++)
-            {
-              if (make_move(currentPosition, static_cast<char>(guess+48), board)==true)
-              {
-                board[column][row] = static_cast<char>(guess+48);
-                display_board(board);
-                previousValueColumn = column;
-                previousValueRow = row;
-                previousValue = guess;
-                return solve_board1(board, previousValueRow, previousValueRow, previousValue, flag);
-              }
-              if (guess==10 && column==0 && row ==0)
-              {
-                return false;
-              }
-              else if (guess == 10)
-              {
-                board[previousValueColumn][previousValueRow] = ',';
-                flag == 1;
-                return solve_board1(board, previousValueColumn, previousValueRow, previousValue, flag);
-              }
-            }
-          }
-        }
-      }
-    }
-    return true;
-  }
 }
 
 bool isEmpty(char entry)
@@ -362,6 +367,24 @@ bool isEmpty(char entry)
     return true;
   }
   return false;
+}
+
+void determineEmptyColumnseEmptyRows(char board[9][9],int previousValueColumn[],int previousValueRow[])
+{
+  int i = 0;
+  for (int column = 0; column < 9; column++)
+  {
+    for (int row = 0; row < 9; row++)
+    {
+      char currentSquare = board[column][row];
+      if (isEmpty(currentSquare) == true)
+      {
+          previousValueColumn[i] = column;
+          previousValueRow[i] = row;
+          i= i+1;
+      }
+    }
+  }
 }
 
 /* solve board problem
