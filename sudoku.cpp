@@ -170,24 +170,27 @@ bool rowOverlap(int entry, int columnPosition, int rowPosition, const char board
 //somehow rBorderMin keeps on skipping THROUGH? s
 bool squareOverlap(int entry, int columnPosition, int rowPosition, const char board[9][9])
 {
+  int cBorderMin;
+  int rBorderMin;
   int cBorderMinStop = (((columnPosition/3)*3)+2)+1;
   int rBorderMinStop = (((rowPosition/3)*3)+2)+1;
-  for (int cBorderMin = (columnPosition/3)*3;cBorderMin<cBorderMinStop; cBorderMin++)
+  for (cBorderMin = (columnPosition/3)*3; cBorderMin<cBorderMinStop; cBorderMin++)
   {
-    for (int rBorderMin = (rowPosition/3)*3;rBorderMin<rBorderMinStop; rBorderMin++)
+    for (rBorderMin = (rowPosition/3)*3;rBorderMin<rBorderMinStop; rBorderMin++)
     {
+      if (rBorderMin == rBorderMinStop)
+      {
+        break;
+      }
       if ((rBorderMin == rowPosition) && (cBorderMin==columnPosition))
       {
         continue;
       }
-      if (entry == board[cBorderMin][rBorderMin])
+      if (entry == static_cast<int>(board[cBorderMin][rBorderMin]-48))
       {
         return true;
       }
-      if (rBorderMin==rBorderMinStop)
-      {
-        break;
-      }
+
     }
   }
   return false;
