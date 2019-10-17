@@ -258,17 +258,12 @@ bool solve_board1(char board[9][9], int previousValueColumn[], int previousValue
           }
           else
           {
-            //CHECK THAT GUESS PLACEMENT IS RIGHT.
             int guess(0);
             char currentPosition[3];
             currentPosition[0] = static_cast<char>(column+65);
             currentPosition[1] = static_cast<char>(row+49);
             currentPosition[2] = '\0';
-            if (previousOverflow == false)
-            {
-              guess = 1;
-            }
-            for (; guess <= 10; guess++)
+            for (int guess = 1; guess <= 10; guess++)
             {
               if (make_move(currentPosition, static_cast<char>(guess+48), board)==true && guess < 10)
               {
@@ -279,10 +274,13 @@ bool solve_board1(char board[9][9], int previousValueColumn[], int previousValue
                 board[column][row] = static_cast<char>(guess+48);
                 //increment trackerValue
                 trackerValue = trackerValue+1;
-                display_board(board);
+                if(is_complete(board)==true)
+                {
+                  return true;
+                }
                 return solve_board1(board, previousValueColumn, previousValueRow, trackerValue, inputValue, previousOverflow);
               }
-              if (guess==10 && column==0 && row ==0)
+              if (guess==10 && column==previousValueColumn[0] && row ==previousValueRow[0])
               {
                 return false;
               }
@@ -306,7 +304,7 @@ bool solve_board1(char board[9][9], int previousValueColumn[], int previousValue
       int guess = inputValue[trackerValue] + 1;
       int column = previousValueColumn[trackerValue];
       int row = previousValueRow[trackerValue];
-      if (guess==10 && column==0 && row ==0)
+      if (guess==10 && column==previousValueColumn[0] && row ==previousValueRow[0])
       {
         return false;
       }
@@ -336,7 +334,10 @@ bool solve_board1(char board[9][9], int previousValueColumn[], int previousValue
           board[column][row] = static_cast<char>(guess+48);
           //increment trackerValue
           trackerValue = trackerValue+1;
-          display_board(board);
+          if (is_complete(board)==true)
+          {
+            return true;
+          }
           return solve_board1(board, previousValueColumn, previousValueRow, trackerValue, inputValue, previousOverflow);
         }
         if (guess==10 && column==0 && row ==0)
@@ -355,7 +356,6 @@ bool solve_board1(char board[9][9], int previousValueColumn[], int previousValue
         }
     }
   }
-  return true;
 }
 }
 
