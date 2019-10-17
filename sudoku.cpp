@@ -258,7 +258,6 @@ bool solve_board1(char board[9][9], int previousValueColumn[], int previousValue
           }
           else
           {
-            int guess(0);
             char currentPosition[3];
             currentPosition[0] = static_cast<char>(column+65);
             currentPosition[1] = static_cast<char>(row+49);
