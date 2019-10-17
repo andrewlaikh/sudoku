@@ -226,7 +226,6 @@ bool save_board(const char* filename, char board[9][9])
 
 /*Question 4 function*/
 //define helper function as is true, (char table, previous value column, previous value row, previous value)
-
 bool solve_board(char board[9][9])
 {
   if (board[1][7] == '9');
@@ -261,8 +260,6 @@ bool solve_board(char board[9][9])
             //make it empty again
             board[column][row]=',';
             return false;
-            //how to make it revisit the previous function AND increment guess?
-            //make sure that this is correct and that you continue from the next guess
           }
         }
         //for when you need to recurse back
@@ -290,6 +287,15 @@ void putGuess(char board[9][9], int guess, int column, int row)
   board[column][row] = static_cast<char>(guess+48);
 }
 
+bool isEmpty(char entry)
+{
+  int unCompletedBlank = static_cast<int>(entry);
+  if (unCompletedBlank < 48)
+  {
+    return true;
+  }
+  return false;
+}
 
 //START HERE FOR PREVIOUS (WORKABLE) SOLUTION
 
@@ -426,15 +432,6 @@ void putGuess(char board[9][9], int guess, int column, int row)
 // }
 // }
 //
-bool isEmpty(char entry)
-{
-  int unCompletedBlank = static_cast<int>(entry);
-  if (unCompletedBlank < 48)
-  {
-    return true;
-  }
-  return false;
-}
 //
 // void determineEmptyColumnseEmptyRows(char board[9][9],int previousValueColumn[],int previousValueRow[])
 // {
