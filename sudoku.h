@@ -8,6 +8,8 @@ bool columnOverlap(int entry, int columnPosition, int rowPosition, const char bo
 bool rowOverlap(int entry, int columnPosition, int rowPosition, const char board[9][9]);
 bool save_board(const char* filename, char board[9][9]);
 bool solve_board(char board[9][9]);
-bool solve_board1(char board[9][9], int previousValueColumn[], int previousValueRow[], int previousValue, int inputValue[], bool previousOverflow);
 bool isEmpty(char entry);
-void determineEmptyColumnseEmptyRows(char board[9][9], int previousValueColumn[], int previousValueRow[]);
+bool make_guess(char board[9][9], int guess, int column, int row);
+void putGuess(char board[9][9], int guess, int column, int row); 
+//void determineEmptyColumnseEmptyRows(char board[9][9], int previousValueColumn[], int previousValueRow[]);
+//bool solve_board1(char board[9][9], int previousValueColumn[], int previousValueRow[], int previousValue, int inputValue[], bool previousOverflow);
