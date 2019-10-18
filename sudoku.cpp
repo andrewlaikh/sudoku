@@ -210,12 +210,11 @@ bool save_board(const char* filename, char board[9][9])
     }
     out_stream.put('\n');
   }
-  out_stream.close();
-  //check if this is the right place to put close
   if (out_stream.fail())
   {
     return false;
   }
+  out_stream.close();
   return true;
 }
 
@@ -223,8 +222,6 @@ bool save_board(const char* filename, char board[9][9])
 /*Question 4 function*/
 bool solve_board(char board[9][9])
 {
-  if (board[1][7] == '9');
-  // display_board(board);
   if(is_complete(board))
   {
     return true;
@@ -261,6 +258,7 @@ bool solve_board(char board[9][9])
     }
   }
 }
+
 bool make_guess(char board[9][9], int guess, int column, int row)
 {
   char currentPosition[3];
