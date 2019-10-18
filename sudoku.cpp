@@ -164,10 +164,6 @@ bool rowOverlap(int entry, int columnPosition, int rowPosition, const char board
   return false;
 }
 
-
-//review the last program, there's a problem with it working.
-//line 78 main has a problem. SQUARE DOESN'T FIT IN.
-//somehow rBorderMin keeps on skipping THROUGH? s
 bool squareOverlap(int entry, int columnPosition, int rowPosition, const char board[9][9])
 {
   int cBorderMin;
@@ -225,7 +221,6 @@ bool save_board(const char* filename, char board[9][9])
 
 
 /*Question 4 function*/
-//define helper function as is true, (char table, previous value column, previous value row, previous value)
 bool solve_board(char board[9][9])
 {
   if (board[1][7] == '9');
@@ -262,8 +257,6 @@ bool solve_board(char board[9][9])
             return false;
           }
         }
-        //for when you need to recurse back
-        // return false;
       }
     }
   }
